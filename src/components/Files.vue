@@ -5,8 +5,11 @@
 	        	<div class="img-wrap">
 	        		<img src="../assets/img/file2x.png">
 	        	</div>
-	        	<input :class="names[index].isAdd ? 'nameinput' : ''" type="text" name="" v-model="names[index].key" @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!names[index].isAdd" @blur="inputblur(index)">
-	        </div>
+            <input ref="tofocus" :class="names[index].isAdd ? 'nameinput' : ''" type="text" v-model="names[index].key"
+                   @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!names[index].isAdd"
+                   :autofocus="names[index].isAdd"  @blur="inputblur(index)">
+          </div>
+
 	    </div>
 	    <ul class="menu-wrap" v-show="menu" ref="menuWrap">
 	    	<li @click="handle('del')">删除</li>
@@ -25,8 +28,10 @@
 	    			<div class="flex-one">
 	    				<img src="../assets/img/file2x.png">
 	    				<!-- <span class="files-name">{{item.name}}</span> -->
-	    				<input :class="name[index].isAdd ? 'nameinput' : ''" type="text" name="" v-model="name[index].name" @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!name[index].isAdd" @blur="inputblur(index)">
-	    			</div>
+              <input ref="tofocus2" :class="name[index].isAdd ? 'nameinput' : ''" type="text" v-model="name[index].name"
+                     @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!name[index].isAdd"
+                     @blur="inputblur2(index)">
+            </div>
 	    			<div class="mix-time file-time">{{item.time}}</div>
 	    		</li>
 	    	</ul>
@@ -50,7 +55,8 @@ export default {
 			menu: false,
 			fileIndex:Number,
 			selectWrap: false,
-			name: [
+      names: '',
+      name: [
 				{
 					name:'不可言说的秘密',
 					time: '2018.05.05 23:34:00',
@@ -80,33 +86,39 @@ export default {
 		}
 	},
 	created(){
+	  this.names = this.postnames
 	},
 	props:{
-		names:Array
+    postnames: Array
 	},
 	methods: {
-		inputFocus(index){
+    toFocus () { // 父组件调用方法
+      this.$refs.tofocus[0].focus()
+    },
+    inputFocus(index){
 			this.names[index].key = this.names[index].key
 		},
 		keyup(event){
 			if(event.keyCode == "13"){
 			}
 		},
-		inputblur(index){
+    inputblur(index){ // 失焦不可点击
 			if(this.names[index].isAdd){
 				this.names[index].isAdd = !this.names[index].isAdd
 			}
-			if(this.name[index].isAdd){
-				this.name[index].isAdd = !this.name[index].isAdd
-			}
 		},
-		mousedown(event,index){
+    inputblur2(index){ // 失焦不可点击
+        if(this.name[index].isAdd){
+          this.name[index].isAdd = !this.name[index].isAdd
+        }
+      },
+      mousedown(event,index){
 			this.fileIndex = index
-			if(event.button === 2){			
+			if(event.button === 2){
 				let that = this;
 				// event.stopPropagation()
-				this.$refs.menuWrap.style.left = (event.clientX - 170) + 'px'
-				this.$refs.menuWrap.style.top = (event.clientY - 190) + 'px'
+        this.$refs.menuWrap.style.left = (event.clientX - 175) + 'px'
+        this.$refs.menuWrap.style.top = (event.clientY -131) + 'px'
 				this.menu = true
 				document.body.onclick=function(event){
 					if(event.button === 0 && that.menu === true){
@@ -114,11 +126,11 @@ export default {
 					}
 				}
 			} else if(event.button === 0){
-				for(let i = 0;i < this.names.length; i++){
+				/*for(let i = 0;i < this.names.length; i++){
 					if(this.names[i].isAdd){
 						this.names[i].isAdd = !this.names[i].isAdd;
 					}
-				}
+				}*/
 			}
 		},
 		handle(type){
@@ -126,7 +138,8 @@ export default {
 				this.names.splice(this.fileIndex, 1)
 			} else if(type === 'rename'){
 				this.names[this.fileIndex].isAdd = !this.names[this.fileIndex].isAdd
-			} else if(type === 'move') {
+        this.$refs.tofocus[this.fileIndex].focus()
+      } else if(type === 'move') {
 				this.selectWrap = true
 			} else{
 
@@ -177,9 +190,10 @@ export default {
 		},
 		newFile() {
 			this.name.unshift({name:'新建文件夹',time: '2018.05.05 23:34:00',isAdd:true})
-		},
+      this.$refs.tofocus2[0].focus()
+    },
 		moveTo() {
-			
+
 		}
 	}
 }
@@ -219,26 +233,38 @@ export default {
 		text-align:center;
 	}
 	.nameinput{
-		background:rgba(116,174,211,0.3);
-	}
+    border:1px solid #28a3ef;
+    border-radius: 2px;
+    text-align: left;
+    padding-left: 5px;
+  }
 }
 .files-box:hover{
 	border:1px dashed blue;
 }
 .menu-wrap{
 	list-style:none;
-	width:60px;
-	border:1px solid #ccc;
-	text-align:center;
-	padding:10px 15px;
 	position:absolute;
 	background:#fff;
-	li{
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  padding:0;
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);
+  li{
 		height:25px;
 		line-height:25px;
-		color:#333;
-		cursor: pointer;
+    width:100px;
+    font-size: 14px;
+    text-align:center;
+    padding: 3px 5px;
+    margin: 1px;
+    color: #777777;
+    cursor: pointer;
 	}
+  li:hover{
+    color: white;
+    background: #28a3ef;
+  }
 }
 .selectfile-wrap{
 	width:500px;
@@ -294,11 +320,19 @@ export default {
 			border: none;
 			background:#fff;
 			outline:none;
-		}
+      width: 78px;
+      height: 22px;
+    }
 		input:nth-child(2n){
 			background:#f9f9f9;
 		}
-		.file-time{
+    .nameinput{
+      border:1px solid #28a3ef;
+      border-radius: 2px;
+      text-align: left;
+      padding-left: 5px;
+    }
+    .file-time{
 			line-height:30px;
 		}
 	}

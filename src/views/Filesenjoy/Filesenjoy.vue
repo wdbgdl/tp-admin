@@ -16,7 +16,7 @@
 		  <el-button size="small" type="primary">点击上传</el-button>
 		  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
 		</el-upload> -->
-        <files :names='names'></files>
+      <files :postnames='names' ref="childFiles"></files>
     </div>
 </template>
 <script>
@@ -42,7 +42,8 @@ export default {
         return this.$confirm(`确定移除 ${ file.name }？`);
       },
       addNewfile() {
-      	this.names.push({key:'新建文件夹',isAdd:true})
+        this.names.unshift({key:'新建文件夹',isAdd:true})
+        this.$refs.childFiles.toFocus() // 调用子组件方法，聚焦第一个input
       }
     },
 	components:{
