@@ -18,7 +18,17 @@
 	    	<li @click="handle('share')">分享</li>
 	    </ul>
 	    <div class="selectfile-wrap" v-show="selectWrap">
-	    	<p class="title">请选择目标目录</p>
+	    	<div class="flex-wrap">
+	    		<div class="arrow-wrap flex-wrap">
+	    			<span class="last-page-wrap">
+	    				<span class="last-arrow"></span>
+	    			</span>
+	    			<span class="next-page-wrap flex-one">
+	    				<span class="next-arrow"></span>
+	    			</span>
+	    		</div>
+	    		<p class="title">请选择目标目录</p>
+	    	</div>
     		<div class="flex-wrap title_wrap">
     			<div class="flex-one">文件名</div>
     			<div class="mix-time">修改时间</div>
@@ -55,8 +65,8 @@ export default {
 			menu: false,
 			fileIndex:Number,
 			selectWrap: false,
-      names: '',
-      name: [
+      		names: '',
+      		name: [
 				{
 					name:'不可言说的秘密',
 					time: '2018.05.05 23:34:00',
@@ -86,39 +96,39 @@ export default {
 		}
 	},
 	created(){
-	  this.names = this.postnames
+	  	this.names = this.postnames
 	},
 	props:{
-    postnames: Array
+    	postnames: Array
 	},
 	methods: {
-    toFocus () { // 父组件调用方法
-      this.$refs.tofocus[0].focus()
-    },
-    inputFocus(index){
+	    toFocus () { // 父组件调用方法
+	      this.$refs.tofocus[0].focus()
+	    },
+	    inputFocus(index){
 			this.names[index].key = this.names[index].key
 		},
 		keyup(event){
 			if(event.keyCode == "13"){
 			}
 		},
-    inputblur(index){ // 失焦不可点击
+    	inputblur(index){ // 失焦不可点击
 			if(this.names[index].isAdd){
 				this.names[index].isAdd = !this.names[index].isAdd
 			}
 		},
-    inputblur2(index){ // 失焦不可点击
-        if(this.name[index].isAdd){
-          this.name[index].isAdd = !this.name[index].isAdd
-        }
-      },
-      mousedown(event,index){
+    	inputblur2(index){ // 失焦不可点击
+	        if(this.name[index].isAdd){
+	          this.name[index].isAdd = !this.name[index].isAdd
+	        }
+	    },
+      	mousedown(event,index){
 			this.fileIndex = index
 			if(event.button === 2){
 				let that = this;
 				// event.stopPropagation()
-        this.$refs.menuWrap.style.left = (event.clientX - 175) + 'px'
-        this.$refs.menuWrap.style.top = (event.clientY -131) + 'px'
+		        this.$refs.menuWrap.style.left = (event.clientX - 175) + 'px'
+		        this.$refs.menuWrap.style.top = (event.clientY -131) + 'px'
 				this.menu = true
 				document.body.onclick=function(event){
 					if(event.button === 0 && that.menu === true){
@@ -138,8 +148,8 @@ export default {
 				this.names.splice(this.fileIndex, 1)
 			} else if(type === 'rename'){
 				this.names[this.fileIndex].isAdd = !this.names[this.fileIndex].isAdd
-        this.$refs.tofocus[this.fileIndex].focus()
-      } else if(type === 'move') {
+        		this.$refs.tofocus[this.fileIndex].focus()
+      		} else if(type === 'move') {
 				this.selectWrap = true
 			} else{
 
@@ -190,8 +200,8 @@ export default {
 		},
 		newFile() {
 			this.name.unshift({name:'新建文件夹',time: '2018.05.05 23:34:00',isAdd:true})
-      this.$refs.tofocus2[0].focus()
-    },
+      		this.$refs.tofocus2[0].focus()
+    	},
 		moveTo() {
 
 		}
@@ -233,11 +243,11 @@ export default {
 		text-align:center;
 	}
 	.nameinput{
-    border:1px solid #28a3ef;
-    border-radius: 2px;
-    text-align: left;
-    padding-left: 5px;
-  }
+	    border:1px solid #28a3ef;
+	    border-radius: 2px;
+	    text-align: left;
+	    padding-left: 5px;
+  	}
 }
 .files-box:hover{
 	border:1px dashed blue;
@@ -246,25 +256,25 @@ export default {
 	list-style:none;
 	position:absolute;
 	background:#fff;
-  border: 1px solid #cccccc;
-  border-radius: 3px;
-  padding:0;
-  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);
-  li{
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    padding:0;
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);
+    li{
 		height:25px;
 		line-height:25px;
-    width:100px;
-    font-size: 14px;
-    text-align:center;
-    padding: 3px 5px;
-    margin: 1px;
-    color: #777777;
-    cursor: pointer;
+	    width:100px;
+	    font-size: 14px;
+	    text-align:center;
+	    padding: 3px 5px;
+	    margin: 1px;
+	    color: #777777;
+	    cursor: pointer;
 	}
-  li:hover{
-    color: white;
-    background: #28a3ef;
-  }
+    li:hover{
+	    color: white;
+	    background: #28a3ef;
+  	}
 }
 .selectfile-wrap{
 	width:500px;
@@ -277,13 +287,54 @@ export default {
     margin-left: -250px;
     top: 50%;
     background: #fff;
-	p{
+    .arrow-wrap{
+    	width:60px;
+    	height:20px;
+    	margin-top:5px;
+    	margin-left:20px;
+    	border-radius:5px;
+    	border:1px solid #ccc;
+    	.last-page-wrap{
+    		width: 29px;
+		    height: 20px;
+		    display: inline-block;
+		    border-right: 1px solid #ccc;
+		    text-align: center;
+    		line-height: 20px;
+		    .last-arrow{
+		    	width:8px;
+		    	height:8px;
+		    	display:inline-block;
+		    	border:1px solid #ccc;
+		    	border-right:none;
+		    	border-bottom:none;
+		    	transform: rotate(-45deg);
+		    }
+    	}
+    	.next-page-wrap{
+		    height: 20px;
+		    display: inline-block;
+		    text-align: center;
+    		line-height: 20px;
+    		.next-arrow{
+		    	width:8px;
+		    	height:8px;
+		    	display:inline-block;
+		    	border:1px solid #ccc;
+		    	border-left:none;
+		    	border-top:none;
+		    	transform: rotate(-45deg);
+		    }
+    	}
+    }
+	.title{
 		text-align:center;
 		height:30px;
 		line-height:30px;
 		font-size:13px;
 		font-weight:500;
-		margin:0;
+		margin:0 auto;
+		margin-left:120px;
 	}
 	.title_wrap{
 		height:25px;
@@ -320,19 +371,19 @@ export default {
 			border: none;
 			background:#fff;
 			outline:none;
-      width: 78px;
-      height: 22px;
-    }
+	      	width: 78px;
+	      	height: 22px;
+    	}
 		input:nth-child(2n){
 			background:#f9f9f9;
 		}
-    .nameinput{
-      border:1px solid #28a3ef;
-      border-radius: 2px;
-      text-align: left;
-      padding-left: 5px;
-    }
-    .file-time{
+    	.nameinput{
+	      	border:1px solid #28a3ef;
+	      	border-radius: 2px;
+	      	text-align: left;
+	      	padding-left: 5px;
+	    }
+	    .file-time{
 			line-height:30px;
 		}
 	}
