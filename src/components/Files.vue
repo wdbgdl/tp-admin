@@ -1,7 +1,7 @@
 <template>
 	<div class="file-wrap">
 	    <div class="flex-wrap" @contextmenu.prevent>
-	        <div class="files-box" v-for="(item,index) in names" @mousedown="mousedown($event, index)" v-on:dblclick="doubleclick($event, names[index].id)">
+	        <div class="files-box" v-for="(item,index) in names" @mousedown="mousedown($event, index, names[index].id)" v-on:dblclick="doubleclick($event, names[index].id)">
 	        	<div class="img-wrap">
 	        		<img src="../assets/img/file2x.png">
 	        	</div>
@@ -58,12 +58,14 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import "mock/login.js";
 export default {
 	data(){
 		return{
 			menu: false,
 			fileIndex:Number,
+			id: Number,
 			selectWrap: false,
       		names: [],
       		name: [
@@ -103,10 +105,20 @@ export default {
             this.names = res.data.data.Files
         });   
 	},
+	watch: {
+		'fileList': function (val) {
+        	this.names = val
+      	}
+	},
+	computed: {
+        ...mapGetters({
+        	fileList: 'getFileList'
+        })
+    },
 	methods: {
-		getfile() { // 获取文件夹数据
-          return this.$store.state.common.getfile
-        },
+		// getfile() { // 获取文件夹数据
+  //         return this.$store.state.common.getfile
+  //       },
 	    toFocus () { // 父组件调用方法
 	    	this.names.unshift({
 	    		key:'新建文件夹',isAdd:true, id:7,
@@ -130,8 +142,9 @@ export default {
 	          this.name[index].isAdd = !this.name[index].isAdd
 	        }
 	    },
-      	mousedown(event,index){
+      	mousedown(event,index,id){
 			this.fileIndex = index
+			this.id = id
 			if(event.button === 2){
 				let that = this;
 				// event.stopPropagation()
@@ -153,7 +166,12 @@ export default {
 		},
 		handle(type){
 			if(type === 'del'){
-				this.names.splice(this.fileIndex, 1)
+				this.$store.dispatch({
+			        type: 'delFile',
+			        param: {
+			            id: this.id
+			        }
+		        })
 			} else if(type === 'rename'){
 				this.names[this.fileIndex].isAdd = !this.names[this.fileIndex].isAdd
         		this.$refs.tofocus[this.fileIndex].focus()
@@ -164,8 +182,14 @@ export default {
 			}
 		},
 		doubleclick(event,id) {
-			this.$store.commit('nextfile', id) // 提交文件id
-			this.names = this.getfile() // 获取数据
+			// this.$store.commit('nextfile', id) // 提交文件id
+			// this.names = this.getfile() // 获取数据
+			this.$store.dispatch({
+		        type: 'toGetFileList',
+		        param: {
+		            id: id
+		        }
+	        })
 		},
 		cancel(){
 			this.selectWrap = false
