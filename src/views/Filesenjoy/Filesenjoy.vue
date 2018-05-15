@@ -16,7 +16,7 @@
 		  <el-button size="small" type="primary">点击上传</el-button>
 		  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
 		</el-upload> -->
-      <files :postnames='names' ref="childFiles"></files>
+      <files ref="childFiles"></files>
     </div>
 </template>
 <script>
@@ -24,8 +24,7 @@ import Files from 'comp/Files'
 export default {
 	data() {
       return {
-        fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
-        names:[{key:'1',isAdd:false},{key:'2',isAdd:false}]
+        fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
       };
     },
     methods: {
@@ -42,7 +41,6 @@ export default {
         return this.$confirm(`确定移除 ${ file.name }？`);
       },
       addNewfile() {
-        this.names.unshift({key:'新建文件夹',isAdd:true})
         this.$refs.childFiles.toFocus() // 调用子组件方法，聚焦第一个input
       }
     },

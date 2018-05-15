@@ -1,7 +1,7 @@
 <template>
 	<div class="file-wrap">
 	    <div class="flex-wrap" @contextmenu.prevent>
-	        <div class="files-box" v-for="(item,index) in names" @mousedown="mousedown($event, index)" v-on:dblclick="doubleclick($event)">
+	        <div class="files-box" v-for="(item,index) in names" @mousedown="mousedown($event, index)" v-on:dblclick="doubleclick($event, names[index].id)">
 	        	<div class="img-wrap">
 	        		<img src="../assets/img/file2x.png">
 	        	</div>
@@ -65,7 +65,7 @@ export default {
 			menu: false,
 			fileIndex:Number,
 			selectWrap: false,
-      		names: '',
+      		names: [],
       		name: [
 				{
 					name:'不可言说的秘密',
@@ -96,14 +96,22 @@ export default {
 		}
 	},
 	created(){
-	  	this.names = this.postnames
-	},
-	props:{
-    	postnames: Array
+		this.$axios({ // 请求根目录
+            url: "getFile",
+            method: "GET"
+        }).then(res => {
+            this.names = res.data.data.Files
+        });   
 	},
 	methods: {
+		getfile() { // 获取文件夹数据
+          return this.$store.state.common.getfile
+        },
 	    toFocus () { // 父组件调用方法
-	      this.$refs.tofocus[0].focus()
+	    	this.names.unshift({
+	    		key:'新建文件夹',isAdd:true, id:7,
+	    	})
+	        this.$refs.tofocus[0].focus()
 	    },
 	    inputFocus(index){
 			this.names[index].key = this.names[index].key
@@ -155,13 +163,9 @@ export default {
 
 			}
 		},
-		doubleclick(event) {
-			this.$axios({
-	            url: "getFile",
-	            method: "GET"
-	        }).then(res => {
-	            this.names = res.data.data.Files;
-	        });
+		doubleclick(event,id) {
+			this.$store.commit('nextfile', id) // 提交文件id
+			this.names = this.getfile() // 获取数据
 		},
 		cancel(){
 			this.selectWrap = false

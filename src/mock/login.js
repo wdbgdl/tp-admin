@@ -47,8 +47,11 @@ if (debug) {
     Mock.mock(/getFile/, {
         "data": {
             Files: [
-                {key:'3',isAdd:false},
-                {key:'4',isAdd:false}
+                {key:'新建文件夹',isAdd:false, id:1},
+                {key:'HTML',isAdd:false, id:2},
+                {key:'JAVA',isAdd:false, id:3},
+                {key:'PHP',isAdd:false, id:4},
+                {key:'C++',isAdd:false, id:5}
             ]
         },
         "msg": "Success",

@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     isCollapse() {
-      return this.$store.state.common.isCollapse
+      return this.$store.state.common.file
     }
   },
   methods: {
