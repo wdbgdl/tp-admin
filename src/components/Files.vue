@@ -5,9 +5,8 @@
 	        	<div class="img-wrap">
 	        		<img src="../assets/img/file2x.png">
 	        	</div>
-            <input ref="tofocus" :class="names[index].isAdd ? 'nameinput' : ''" type="text" v-model="names[index].key"
-                   @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!names[index].isAdd"
-                   :autofocus="names[index].isAdd"  @blur="inputblur(index)">
+	        	<p class="file_name" v-show="!names[index].isAdd">{{item.name}}</p>
+            <input v-show="names[index].isAdd" ref="in" :class="!name[index].isAdd ? 'nameinput' : ''"  @keyup="keyup($event)" autofocus="autofocus"  @blur="inputblur(index)">
           </div>
 
 	    </div>
@@ -34,12 +33,12 @@
     			<div class="mix-time">修改时间</div>
     		</div>
 	    	<ul class="file-list">
-	    		<li class="flex-wrap file-item" v-for="(item, index) in name" @click="singleclick(index)">
+	    		<li class="flex-wrap file-item" v-for="(item, index) in names" @click="singleclick(index)">
 	    			<div class="flex-one">
 	    				<img src="../assets/img/file2x.png">
 	    				<!-- <span class="files-name">{{item.name}}</span> -->
-              <input ref="tofocus2" :class="name[index].isAdd ? 'nameinput' : ''" type="text" v-model="name[index].name"
-                     @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!name[index].isAdd"
+              <input ref="tofocus2" :class="names[index].isAdd ? 'nameinput' : ''" type="text" v-model="names[index].name"
+                     @change="inputFocus(index)" @keyup="keyup($event)" :readonly="!names[index].isAdd"
                      @blur="inputblur2(index)">
             </div>
 	    			<div class="mix-time file-time">{{item.time}}</div>
@@ -98,12 +97,12 @@ export default {
 		}
 	},
 	created(){
-		this.$axios({ // 请求根目录
-            url: "getFile",
-            method: "GET"
-        }).then(res => {
-            this.names = res.data.data.Files
-        });   
+        this.$store.dispatch({
+	        type: 'toGetFileList',
+	        param: {
+	        	type: 'init'
+	        }
+        })  
 	},
 	watch: {
 		'fileList': function (val) {
@@ -116,26 +115,29 @@ export default {
         })
     },
 	methods: {
-		// getfile() { // 获取文件夹数据
-  //         return this.$store.state.common.getfile
-  //       },
 	    toFocus () { // 父组件调用方法
-	    	this.names.unshift({
-	    		key:'新建文件夹',isAdd:true, id:7,
-	    	})
-	        this.$refs.tofocus[0].focus()
+	    	this.$store.dispatch({
+		        type: 'toGetFileList',
+		        param: {
+		        	type: 'new'
+		        }
+	        })
 	    },
-	    inputFocus(index){
-			this.names[index].key = this.names[index].key
-		},
 		keyup(event){
 			if(event.keyCode == "13"){
+				console.log(90)
 			}
 		},
     	inputblur(index){ // 失焦不可点击
-			if(this.names[index].isAdd){
-				this.names[index].isAdd = !this.names[index].isAdd
-			}
+			let val = this.$refs.in[this.fileIndex].value
+			this.$store.dispatch({
+				type: 'renameFile',
+				param: {
+		            id: this.id,
+		            type: 'blur',
+		            value: val
+		        }
+			})
 		},
     	inputblur2(index){ // 失焦不可点击
 	        if(this.name[index].isAdd){
@@ -173,8 +175,13 @@ export default {
 			        }
 		        })
 			} else if(type === 'rename'){
-				this.names[this.fileIndex].isAdd = !this.names[this.fileIndex].isAdd
-        		this.$refs.tofocus[this.fileIndex].focus()
+				this.$store.dispatch({
+					type: 'renameFile',
+					param: {
+			            id: this.id
+			        }
+				})
+				this.$refs.in[this.fileIndex].value = document.getElementsByClassName('file_name')[this.fileIndex].innerText
       		} else if(type === 'move') {
 				this.selectWrap = true
 			} else{
@@ -182,8 +189,6 @@ export default {
 			}
 		},
 		doubleclick(event,id) {
-			// this.$store.commit('nextfile', id) // 提交文件id
-			// this.names = this.getfile() // 获取数据
 			this.$store.dispatch({
 		        type: 'toGetFileList',
 		        param: {
